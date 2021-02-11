@@ -7,9 +7,6 @@ import (
 	"log"
 )
 
-// EasySimConnectLogLevel is a type of Log level
-type EasySimConnectLogLevel int
-
 // EasySimConnect for easy use of SimConnect in golang
 // Please show example_test.go for use case
 type EasySimConnect struct {
@@ -197,7 +194,7 @@ func (esc *EasySimConnect) ConnectToSimVar(listSimVar ...SimVar) (<-chan []SimVa
 func (esc *EasySimConnect) ConnectToSimVarObject(listSimVar ...SimVar) <-chan []SimVar {
 	c, err := esc.ConnectToSimVar(listSimVar...)
 	if err != nil {
-		log.Println(LogError, err.Error())
+		log.Println(err.Error())
 		return make(<-chan []SimVar)
 	}
 	return c
