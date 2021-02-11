@@ -4,20 +4,11 @@ import (
 	"fmt"
 	"time"
 	"unsafe"
-
-	"github.com/sirupsen/logrus"
+	"log"
 )
 
 // EasySimConnectLogLevel is a type of Log level
 type EasySimConnectLogLevel int
-
-// Log Level
-const (
-	LogNo EasySimConnectLogLevel = iota
-	LogError
-	LogWarn
-	LogInfo
-)
 
 // EasySimConnect for easy use of SimConnect in golang
 // Please show example_test.go for use case
@@ -29,7 +20,6 @@ type EasySimConnect struct {
 	indexEvent   uint32
 	listEvent    map[uint32]func(interface{})
 	listSimEvent map[KeySimEvent]SimEvent
-	logLevel     EasySimConnectLogLevel
 	cOpen        chan bool
 	alive        bool
 	cException   chan *SIMCONNECT_RECV_EXCEPTION
@@ -50,16 +40,10 @@ func NewEasySimConnect() (*EasySimConnect, error) {
 		0,
 		make(map[uint32]func(interface{})),
 		make(map[KeySimEvent]SimEvent),
-		LogNo,
 		make(chan bool, 1),
 		true,
 		make(chan *SIMCONNECT_RECV_EXCEPTION),
 	}, nil
-}
-
-// SetLoggerLevel you can set log level in EasySimConnect
-func (esc *EasySimConnect) SetLoggerLevel(level EasySimConnectLogLevel) {
-	esc.logLevel = level
 }
 
 // Close Finishing EasySimConnect, All object created with this EasySimConnect's instance is perished after call this function
@@ -89,18 +73,7 @@ func (esc *EasySimConnect) Connect(appName string) (<-chan bool, error) {
 }
 
 func (esc *EasySimConnect) logf(level EasySimConnectLogLevel, format string, args ...interface{}) {
-	if level > esc.logLevel {
-		return
-	}
-	if level == LogInfo {
-		logrus.Infof(format, args...)
-	}
-	if level == LogWarn {
-		logrus.Warnf(format, args...)
-	}
-	if level == LogError {
-		logrus.Errorf(format, args...)
-	}
+	log.Println(args...)
 }
 
 func (esc *EasySimConnect) runDispatch() {
@@ -173,10 +146,10 @@ func (esc *EasySimConnect) runDispatch() {
 			case esc.listChan[recv.dwDefineID] <- returnSimVar:
 			case <-time.After(esc.delay):
 			}
-			go func() {
-				time.Sleep(esc.delay)
-				esc.sc.RequestDataOnSimObjectType(uint32(0), recv.dwDefineID, uint32(0), uint32(0))
-			}()
+			//go func() {
+			time.Sleep(esc.delay)
+			esc.sc.RequestDataOnSimObjectType(uint32(0), recv.dwDefineID, uint32(0), uint32(0))
+			//}()
 
 		default:
 			esc.logf(LogInfo, "%#v\n", recvInfo)
