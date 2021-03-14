@@ -311,8 +311,7 @@ func (esc *EasySimConnect) ConnectSysEventSim() <-chan bool {
 func (esc *EasySimConnect) ConnectSysEventSimStart() <-chan bool {
 	c := make(chan bool)
 	esc.connectSysEvent(SystemEventSimStart, func(data interface{}) {
-		event := data.(SIMCONNECT_RECV_EVENT)
-		c <- event.dwData > 0
+		c <- true
 	})
 	return c
 }
@@ -321,8 +320,7 @@ func (esc *EasySimConnect) ConnectSysEventSimStart() <-chan bool {
 func (esc *EasySimConnect) ConnectSysEventSimStop() <-chan bool {
 	c := make(chan bool)
 	esc.connectSysEvent(SystemEventSimStop, func(data interface{}) {
-		event := data.(SIMCONNECT_RECV_EVENT)
-		c <- event.dwData > 0
+		c <- true
 	})
 	return c
 }
