@@ -2,9 +2,9 @@ package simconnect
 
 import (
 	"fmt"
+	"log"
 	"time"
 	"unsafe"
-	"log"
 )
 
 // EasySimConnect for easy use of SimConnect in golang
@@ -301,6 +301,26 @@ func (esc *EasySimConnect) ConnectSysEventPaused() <-chan bool {
 func (esc *EasySimConnect) ConnectSysEventSim() <-chan bool {
 	c := make(chan bool)
 	esc.connectSysEvent(SystemEventSim, func(data interface{}) {
+		event := data.(SIMCONNECT_RECV_EVENT)
+		c <- event.dwData > 0
+	})
+	return c
+}
+
+// SystemEventSimStart Request a notification when Sim start.
+func (esc *EasySimConnect) ConnectSysEventSimStart() <-chan bool {
+	c := make(chan bool)
+	esc.connectSysEvent(SystemEventSimStart, func(data interface{}) {
+		event := data.(SIMCONNECT_RECV_EVENT)
+		c <- event.dwData > 0
+	})
+	return c
+}
+
+// ConnectSysEventSimStop Request a notification when Sim stop.
+func (esc *EasySimConnect) ConnectSysEventSimStop() <-chan bool {
+	c := make(chan bool)
+	esc.connectSysEvent(SystemEventSimStop, func(data interface{}) {
 		event := data.(SIMCONNECT_RECV_EVENT)
 		c <- event.dwData > 0
 	})
