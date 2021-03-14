@@ -12,7 +12,6 @@ func connect() *sim.EasySimConnect {
 	if err != nil {
 		panic(err)
 	}
-	sc.SetLoggerLevel(sim.LogInfo)
 	c, err := sc.Connect("MyApp")
 	if err != nil {
 		panic(err)

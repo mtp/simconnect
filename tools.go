@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/sirupsen/logrus"
+	"log"
 )
 
 func convStrToGoString(buf []byte) string {
@@ -112,7 +112,7 @@ func InterfaceAssignSimVar(listSimVar []SimVar, iFace interface{}) {
 func SimVarAssignInterface(iFace interface{}, listSimVar []SimVar) interface{} {
 	rt := reflect.TypeOf(iFace)
 	if rt.Kind() != reflect.Struct {
-		logrus.Warn("Interface error in SimVarAssignInterface:", rt.Name())
+		log.Println("Interface error in SimVarAssignInterface:", rt.Name())
 		return nil
 	}
 	reflectElem := reflect.New(rt).Elem()
@@ -123,7 +123,7 @@ func SimVarAssignInterface(iFace interface{}, listSimVar []SimVar) interface{} {
 			continue
 		}
 		logWarm := func(i int64, err error) {
-			logrus.Warn("#"+strconv.FormatInt(i, 10), "ignored field in AssignInterface", f.Name, " tag:", tag, "error:", err)
+			log.Println("#"+strconv.FormatInt(i, 10), "ignored field in AssignInterface", f.Name, " tag:", tag, "error:", err)
 		}
 		simVar := getByVarName(tag, listSimVar)
 		if simVar == nil {
@@ -183,7 +183,7 @@ func SimVarAssignInterface(iFace interface{}, listSimVar []SimVar) interface{} {
 			}
 			reflectValue.Set(reflect.ValueOf(data))
 		default:
-			logrus.Infoln("Type :", reflectValue.Type(), "?")
+			log.Println("Type :", reflectValue.Type(), "?")
 		}
 	}
 	return reflectElem.Interface()
